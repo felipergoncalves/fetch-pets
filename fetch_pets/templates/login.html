@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Área do Cliente
+{% endblock %}
+
+{% block main %}
+<link rel="stylesheet" href="{% static 'css/login.modules.css'%}">
+<div class="main mt-5">
+    <div class="text-center">
+        <h1>Bem Vindo(a)!</h1>
+    </div>
+    <div class="w-100 mb-5 mt-5 d-flex justify-content-space-between">
+        <div class="login mr-4 p-3 w-100">
+            <div class="header mb-3">
+                <h5>Minha conta</h5>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu email" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" required>
+                </div>
+                <input class="btn btn-primary custom-btn" type="submit" value="Login">
+            </form>
+        </div>
+        <hr>
+        <div class="signup ml-4 p-3 w-100">
+            <div class="header mb-3">
+                <h5>Junte-se a nós</h5>
+            </div>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username-signup"
+                        placeholder="Digite seu username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email-signup">Email</label>
+                    <input type="email" class="form-control" id="email-signup" name="email-signup"
+                        placeholder="Digite seu email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password-signup">Senha</label>
+                    <input type="password" class="form-control" id="password-signup" name="password-signup"
+                        placeholder="Digite sua senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="password-confirm">Confirme sua senha</label>
+                    <input type="password" class="form-control" id="password-confirm" name="password-confirm"
+                        placeholder="Confirme sua senha" required>
+                </div>
+                <input class="btn btn-primary" type="submit" value="Cadastrar-se">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+hr{
+    background-color: #94D2BD;
+    height: 70vh;
+    width: 8px;
+}
+
+input[type="submit"]{
+    background-color: #94D2BD;
+    border: solid 1px #94D2BD;
+}
+
+input[type="submit"]:hover{
+    background-color: #74b49f;
+    border: solid 1px #74b49f;
+}
+
+/* .custom-btn:active{
+    background-color: #74b49f;
+    border: solid 1px #74b49f;
+} */
