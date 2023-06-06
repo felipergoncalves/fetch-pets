@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Meu perfil
+{% endblock %}
+
+{% block main %}
+<div class="mt-5 d-flex justify-content-center align-items-center flex-column header">
+    <img src="{{user_profile.profileimg.url}}" width="100px" height="100px" alt="">
+    <p>{{user.username}}</p>
+    <a href="settings" class="btn btn-primary">Editar perfil</a>
+</div>
+
+<div class="d-flex menu">
+    <a class="mr-2" href="#">Meus posts</a>
+    <a class="ml-2" href="#">Favoritos</a>
+</div>
+<hr>
+<div class="content mt-3">
+    <div class="mt-5 row row-cols-1 row-cols-md-3">
+        <div class="col mb-4">
+            <div class="card">
+                <img src="{% static 'img/main-dog.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                        additional content. This content is a little bit longer.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col mb-4">
+            <div class="card">
+                <img src="{% static 'img/main-dog.jpg' %}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
+                        additional content. This content is a little bit longer.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
