@@ -19,7 +19,7 @@
   <div class="container-fluid p-0">
     <div class="row">
       <div class="col-12 pr-0">
-        <nav class="d-flex justify-content-space-around navbar navbar-expand-md navbar-dark" style="background-color: #264653;">
+        <nav class="d-flex justify-content-between navbar navbar-expand-md navbar-dark" style="background-color: #264653;">
           <!-- Brand -->
           <a class="navbar-brand" href="/">Fetch Pets</a>
           <div class="col-8 p-0 d-flex justify-content-center align-items-center" id="collapsibleNavbar">
@@ -38,11 +38,10 @@
                 {% if user.get_username %}
                 <div class="d-flex justify-content-center align-items-center text-white nav-options">
                   <li class="mr-2"><i class="bi bi-chat-left-dots"></i></li>
-                  <li><i class="bi bi-plus-circle"></i></li>
+                  <li><a href="upload"><i class="bi bi-plus-circle"></i></a></li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                      Olá {{ user.get_username }}
-                      <!-- <img src="{{Profile.profileimg}}"> -->
+                      <img width="20px" height="20px" src="{{user_profile.profileimg.url}}">
                     </a>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="myprofile">Meu Perfil</a>

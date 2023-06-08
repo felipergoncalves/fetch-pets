@@ -3,11 +3,17 @@ from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Profile
+from .models import Profile, Post
 
 # Create your views here.
-def index(request):
-    return render(request, 'index.html')
+def index(request):    
+    posts = Post.objects.all()
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user.username)
+        user_profile = Profile.objects.get(user=user_object)
+        return render(request, 'index.html', {'user_profile': user_profile, 'posts':posts})
+    else:
+        return render(request, 'index.html', {'posts':posts})
     
         
 def login_view(request):
@@ -65,7 +71,8 @@ def logout(request):
 @login_required(login_url='login')
 def myprofile(request):
     user_profile = Profile.objects.get(user=request.user)
-    return render(request, 'myprofile.html', {'user_profile': user_profile})
+    posts = Post.objects.filter(user=request.user)
+    return render(request, 'myprofile.html', {'user_profile': user_profile, 'posts':posts})
 
 @login_required(login_url='login')
 def settings(request):
@@ -127,3 +134,24 @@ def settings(request):
         return redirect('myprofile')
 
     return render(request, 'settings.html', {'user_profile': user_profile})
+
+@login_required(login_url='login')
+def upload(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+    if request.method == 'POST':
+        user = request.user.username
+        image = request.FILES.get('image_upload')
+        descricao = request.POST['descricao']
+        especie = request.POST['especie']
+        raca = request.POST['raca']
+        sexo = request.POST['sexo']
+        idade = request.POST['idade']
+        localizacao = request.POST['localizacao']
+
+        new_post = Post.objects.create(user=user, image=image, descricao=descricao, especie_animal=especie, raca_animal=raca, sexo_animal=sexo, idade=idade, localizacao=localizacao)
+        new_post.save()
+
+        return redirect('/')    
+    return render(request, 'pet-form.html', {'user_profile':user_profile})
+    

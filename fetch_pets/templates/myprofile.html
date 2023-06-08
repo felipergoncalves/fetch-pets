@@ -12,33 +12,31 @@ Meu perfil
     <a href="settings" class="btn btn-primary">Editar perfil</a>
 </div>
 
-<div class="d-flex menu">
-    <a class="mr-2" href="#">Meus posts</a>
-    <a class="ml-2" href="#">Favoritos</a>
+<div class="d-flex justify-content-between">
+    <div>
+        <a class="mr-2 active" href="myprofile">Meus posts</a>
+        <a class="ml-2" href="#">Favoritos</a>
+    </div>
+    <div>
+        <a href="upload">Novo post</a>
+    </div>
 </div>
 <hr>
-<div class="content mt-3">
-    <div class="mt-5 row row-cols-1 row-cols-md-3">
-        <div class="col mb-4">
-            <div class="card">
-                <img src="{% static 'img/main-dog.jpg' %}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-                        additional content. This content is a little bit longer.</p>
-                </div>
+<div class="mt-5 row row-cols-1 row-cols-md-3">
+    {% for post in posts reversed %}
+    <div class="col mb-4">
+        <div class="card">
+            <img src="{{post.image.url}}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{post.raca_animal}}, {{post.idade}}</h5>
+                <p class="card-text">{{post.descricao}}</p>
+                <p class="card-text"><i class="bi bi-geo-alt-fill"> </i>{{post.localizacao}}</p>
             </div>
-        </div>
-        <div class="col mb-4">
-            <div class="card">
-                <img src="{% static 'img/main-dog.jpg' %}" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to
-                        additional content. This content is a little bit longer.</p>
-                </div>
-            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{post.created_at}}</small>
+              </div>
         </div>
     </div>
+    {% endfor %}
 </div>
 {% endblock %}
