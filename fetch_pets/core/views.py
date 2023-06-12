@@ -69,17 +69,18 @@ def logout(request):
     return redirect('/')
 
 @login_required(login_url='login')
-def myprofile(request):
+def profile(request):
     user_profile = Profile.objects.get(user=request.user)
     posts = Post.objects.filter(user=request.user)
-    return render(request, 'myprofile.html', {'user_profile': user_profile, 'posts':posts})
+    posts_length = len(posts)
+    return render(request, 'profile.html', {'user_profile': user_profile, 'posts':posts, 'posts_length':posts_length})
 
 @login_required(login_url='login')
-def settings(request):
-    user_profile = Profile.objects.get(user=request.user)
-
+def settings(request):  
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
     if request.method == 'POST':
-        
+            
         if request.FILES.get('image') == None:
             image = user_profile.profileimg
             nome = request.POST['nome']
@@ -131,9 +132,8 @@ def settings(request):
             user_profile.complemento = complemento
             user_profile.numero = numero
             user_profile.save()
-        return redirect('myprofile')
-
-    return render(request, 'settings.html', {'user_profile': user_profile})
+        return redirect('profile')
+    return render(request, 'settings.html', {'user_profile': user_profile})  
 
 @login_required(login_url='login')
 def upload(request):
@@ -154,4 +154,4 @@ def upload(request):
 
         return redirect('/')    
     return render(request, 'pet-form.html', {'user_profile':user_profile})
-    
+  
