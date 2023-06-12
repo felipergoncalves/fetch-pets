@@ -15,7 +15,6 @@ def index(request):
     else:
         return render(request, 'index.html', {'posts':posts})
     
-        
 def login_view(request):
     if request.method == 'POST':
         if 'signup-form' in request.POST:
@@ -27,7 +26,7 @@ def login_view(request):
             if password == password2:
                 if User.objects.filter(email=email).exists():
                     messages.info(request, 'Email já está cadastrado!')
-                    return redirect('login.html')
+                    return redirect('login')
                 elif User.objects.filter(username=username).exists():
                     messages.info(request, 'Username já existe!')
                     return redirect('login')
@@ -46,7 +45,7 @@ def login_view(request):
                     return redirect('settings')
             else:
                 messages.info(request, 'As senhas não são iguais!')
-                return redirect('login.html')
+                return redirect('login')
         elif 'signin-form' in request.POST:
             usernameSignIn = request.POST['username']
             passwordSignIn = request.POST['password']
@@ -132,6 +131,7 @@ def settings(request):
             user_profile.complemento = complemento
             user_profile.numero = numero
             user_profile.save()
+        messages.info(request, 'Dados atualizados com sucesso!')
         return redirect('profile')
     return render(request, 'settings.html', {'user_profile': user_profile})  
 
@@ -152,6 +152,21 @@ def upload(request):
         new_post = Post.objects.create(user=user, image=image, descricao=descricao, especie_animal=especie, raca_animal=raca, sexo_animal=sexo, idade=idade, localizacao=localizacao)
         new_post.save()
 
+        messages.info(request, 'Post criado com sucesso!')
         return redirect('/')    
     return render(request, 'pet-form.html', {'user_profile':user_profile})
   
+@login_required(login_url='login')
+def petPage(request, pk):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+    post = Post.objects.get(id=pk)
+    post_owner = User.objects.get(username=post.user)
+    post_owner_profile = Profile.objects.get(user=post_owner)
+    context = {
+        'user_object':user_object,
+        'user_profile':user_profile,
+        'post':post,
+        'post_owner_profile':post_owner_profile
+    }
+    return render(request, 'pet-page.html', context)

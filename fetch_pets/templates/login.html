@@ -6,7 +6,14 @@
 {% endblock %}
 
 {% block main %}
-<link rel="stylesheet" href="{% static 'css/login.modules.css'%}">
+{% if messages %}
+{% for mensagem in messages %}
+<div id="alert" class="alert alert-danger alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{ mensagem }}</strong>
+</div>
+{% endfor %}
+{% endif %}
 <div class="main mt-5">
     <div class="text-center">
         <h1>Bem Vindo(a)!</h1>
@@ -20,16 +27,20 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Digite seu username" required>
+                    <input type="text" class="form-control" id="username" name="username"
+                        placeholder="Digite seu username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Senha</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Digite sua senha" required>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Digite sua senha" required>
                 </div>
                 <input class="btn btn-primary custom-btn" name="signin-form" type="submit" value="Login">
             </form>
         </div>
-        <hr>
+        <hr style="background-color: #94D2BD;
+        height: 70vh;
+        width: 8px;">
         <div class="signup ml-4 p-3 w-100">
             <div class="header mb-3">
                 <h5>Junte-se a nós</h5>
