@@ -54,50 +54,35 @@ Home
             <div>
                 <h4>Comentários</h4>
                 <div class="px-2" style="overflow-y: scroll; height: 200px;">
+                    {% for comentario in comentarios %}
                     <div class="mt-2">
                         <div style="background-color: #E1E0E0; border-radius: 8px;"
                             class="comentario p-2 d-flex flex-column">
                             <div class="d-flex">
-                                <img width="20px" height="20px" src="https://source.unsplash.com/random" alt="">
-                                <p class="ml-1 mb-1">Autor</p>
+                                <img style="border-radius: 100%;" width="20px" height="20px"
+                                    src="{{comentario.imagem_autor.url}}" alt="">
+                                <p class="ml-1 mb-1">{{comentario.autor}}</p>
                             </div>
-                            <p class="mb-1">Conteudo</p>
+                            <p class="mb-1">{{comentario.conteudo}}</p>
                             <div class="d-flex w-100 justify-content-end">
-                                <small>Horário</small>
+                                <small>{{comentario.data_publicacao}}</small>
                             </div>
                         </div>
                     </div>
-                    <div class="mt-2">
-                        <div style="background-color: #E1E0E0; border-radius: 8px;"
-                            class="comentario p-2 d-flex flex-column">
-                            <div class="d-flex">
-                                <img width="20px" height="20px" src="https://source.unsplash.com/random" alt="">
-                                <p class="ml-1 mb-1">Autor</p>
-                            </div>
-                            <p class="mb-1">Conteudo</p>
-                            <div class="d-flex w-100 justify-content-end">
-                                <small>Horário</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-2">
-                        <div style="background-color: #E1E0E0; border-radius: 8px;"
-                            class="comentario p-2 d-flex flex-column">
-                            <div class="d-flex">
-                                <img width="20px" height="20px" src="https://source.unsplash.com/random" alt="">
-                                <p class="ml-1 mb-1">Autor</p>
-                            </div>
-                            <p class="mb-1">Conteudo</p>
-                            <div class="d-flex w-100 justify-content-end">
-                                <small>Horário</small>
-                            </div>
-                        </div>
-                    </div>
+                    {% empty %}
+                    <p>Nenhum comentário ainda.</p>
+                    {% endfor %}
                 </div>
             </div>
             <div>
-                <form class="px-2 py-2 w-100" action="" method="post">
-                    <input class="form-control" type="text" name="" id="" placeholder="Digite um comentário">
+                <!-- Formulário de Comentário -->
+                <form name="coment-post" class="px-2 py-2 w-100" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                    <input class="form-control" type="text" name="conteudo" id="conteudo"
+                        placeholder="Digite um comentário">
+                    <!-- <textarea name="conteudo" placeholder="Digite seu comentário"></textarea> -->
+                    <button type="submit" id="submitButton" style="display: none;"></button>
                 </form>
             </div>
         </div>

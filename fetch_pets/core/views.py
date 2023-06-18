@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Profile, Post
+from django.views.generic import CreateView
+from django.views import View
+from .models import Profile, Post, Comentario
 
 # Create your views here.
 def index(request):    
@@ -62,19 +64,19 @@ def login_view(request):
     
     return HttpResponse('Erro: ação inválida')
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def logout(request):
     auth.logout(request)
     return redirect('/')
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def profile(request):
     user_profile = Profile.objects.get(user=request.user)
     posts = Post.objects.filter(user=request.user)
     posts_length = len(posts)
     return render(request, 'profile.html', {'user_profile': user_profile, 'posts':posts, 'posts_length':posts_length})
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def settings(request):  
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
@@ -135,7 +137,7 @@ def settings(request):
         return redirect('profile')
     return render(request, 'settings.html', {'user_profile': user_profile})  
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def upload(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
@@ -156,17 +158,45 @@ def upload(request):
         return redirect('/')    
     return render(request, 'pet-form.html', {'user_profile':user_profile})
   
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def petPage(request, pk):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
     post = Post.objects.get(id=pk)
     post_owner = User.objects.get(username=post.user)
     post_owner_profile = Profile.objects.get(user=post_owner)
+    comentarios = post.comentarios_relacionados.all()
     context = {
         'user_object':user_object,
         'user_profile':user_profile,
         'post':post,
-        'post_owner_profile':post_owner_profile
+        'post_owner_profile':post_owner_profile,
+        'comentarios':comentarios
     }
+
+    if request.method == 'POST':
+         # Obtenha os dados do formulário de comentário submetido
+        conteudo = request.POST.get('conteudo')
+        post_id = pk
+
+        # Obtenha o post relacionado ao comentário
+        post = Post.objects.get(id=post_id)
+
+        # Obtenha o usuário logado
+        autor = request.user
+
+        # Obtenha as informações do autor do perfil
+        profile = Profile.objects.get(user=autor)
+        nome_autor = f"{profile.nome_usuario} {profile.sobrenome_usuario}"
+        imagem_autor = profile.profileimg
+
+        # Crie o comentário
+        comentario = Comentario.objects.create(
+            post=post,
+            autor=autor,
+            conteudo=conteudo,
+            nome_autor=nome_autor,
+            imagem_autor=imagem_autor
+        )
+
     return render(request, 'pet-page.html', context)

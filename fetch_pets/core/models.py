@@ -35,8 +35,19 @@ class Post(models.Model):
     sexo_animal = models.CharField(max_length=100)
     idade = models.IntegerField()
     localizacao = models.CharField(max_length=100)
-    #comentarios =
+    comentarios = models.ManyToManyField('Comentario', related_name='posts', blank=True)
     #favoritos =
 
     def __str__(self):
         return self.user
+
+class Comentario(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comentarios_relacionados')
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    conteudo = models.TextField()
+    data_publicacao = models.DateTimeField(auto_now_add=True)
+    nome_autor = models.CharField(max_length=100)
+    imagem_autor = models.ImageField(upload_to='comentarios/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Comentário por {self.nome_autor}"
