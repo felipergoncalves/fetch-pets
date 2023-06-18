@@ -33,7 +33,7 @@ Home
                     width: 100%; height: 100%;" src="{{post.image.url}}" class="card-img-top" alt="...">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{post.raca_animal}}, {{post.idade}}</h5>
+                        <h5 class="card-title">{{post.raca_animal}}, {{post.idade}}{% if post.idade == 1 %} ano{% else %} anos {% endif %}</h5>
                         <p class="card-text">{{post.descricao}}</p>
                         <p class="card-text"><i class="bi bi-geo-alt-fill"> </i>{{post.localizacao}}</p>
                     </div>

@@ -2,10 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.views.generic import CreateView
-from django.views import View
-from .models import Profile, Post, Comentario
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from .models import Profile, Post, Comentario, LikePost
 
 # Create your views here.
 def index(request):    
@@ -166,12 +165,22 @@ def petPage(request, pk):
     post_owner = User.objects.get(username=post.user)
     post_owner_profile = Profile.objects.get(user=post_owner)
     comentarios = post.comentarios_relacionados.all()
+
+    username=request.user
+    #armazenar o post para verificar se o usuário já curtiu
+    likedPost = LikePost.objects.filter(post_id=post, username=username)
+    change_color = False
+    if likedPost:
+        change_color = True
+        print("Achou")
+
     context = {
         'user_object':user_object,
         'user_profile':user_profile,
         'post':post,
         'post_owner_profile':post_owner_profile,
-        'comentarios':comentarios
+        'comentarios':comentarios,
+        'change_color':change_color
     }
 
     if request.method == 'POST':
@@ -200,3 +209,46 @@ def petPage(request, pk):
         )
 
     return render(request, 'pet-page.html', context)
+
+@login_required(login_url='/login')
+def like(request, pk):
+    user = request.user
+    post = Post.objects.get(id=pk)
+    current_likes = post.likes
+    liked = LikePost.objects.filter(username=user, post_id=post).count()
+    if not liked:
+        liked = LikePost.objects.create(username=user, post_id=post)
+        current_likes = current_likes + 1
+    else:
+        liked = LikePost.objects.filter(username=user, post_id=post).delete()
+        current_likes = current_likes - 1
+    post.likes = current_likes
+    post.save()
+    return redirect(f'/pet-page/{pk}')
+
+@login_required(login_url='/login')
+def liked_posts(request):
+    user_profile = Profile.objects.get(user=request.user)
+    liked_posts = user_profile.liked_posts.all()
+
+    context = {
+        'user_profile': user_profile,
+        'liked_posts': liked_posts,
+    }
+
+    return render(request, 'liked_posts.html', context)
+
+@login_required(login_url='/login')
+def liked_posts(request):
+    user_profile = Profile.objects.get(user=request.user)
+    user = request.user
+    liked_posts = LikePost.objects.filter(username=user).values('post_id')
+    posts = Post.objects.filter(id__in=liked_posts)
+    posts_length = len(posts)
+    context = {
+        'user_profile': user_profile,
+        'liked_posts': posts,
+        'posts_length':posts_length
+    }
+
+    return render(request, 'liked_posts.html', context)

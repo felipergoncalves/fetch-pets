@@ -9,4 +9,6 @@ urlpatterns = [
     path('settings', views.settings, name='settings'),
     path('upload', views.upload, name='upload'),
     path('pet-page/<str:pk>', views.petPage, name='pet-page'),
+    path('like/<str:pk>', views.like, name='like'),
+    path('liked_posts', views.liked_posts, name='liked_posts')
 ]

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Meu perfil
+{% endblock %}
+
+{% block main %}
+{% if messages %}
+{% for mensagem in messages %}
+<div id="alert" class="alert alert-success alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{ mensagem }}</strong>
+</div>
+{% endfor %}
+{% endif %}
+<div class="mt-5 d-flex justify-content-center align-items-center flex-column header">
+    <div style="width: 120px; height: 120px; position: relative; overflow: hidden;">
+    <img style="border-radius: 100%; top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    position: absolute;
+    width: 100%;
+    height: 100%;" src="{{user_profile.profileimg.url}}" alt="">
+    </div>
+    <p>{{user_profile.user.username}}</p>
+    <a href="settings" class="btn custom-button btn-primary">Editar perfil</a>
+</div>
+
+<div class="d-flex justify-content-between">
+    <div>
+        <a class="mr-2" href="/profile">Meus posts</a>
+        <a class="ml-2" href="/liked_posts">Posts que você curtiu</a>
+    </div>
+    <div>
+        <a href="/upload">Novo post</a>
+    </div>
+</div>
+<hr>
+{% if posts_length == 0 %}
+<div class="w-100 d-flex flex-column justify-content-center align-items-center">
+    <h3>Você não curtiu nenhum post ainda</h3>
+    <i style="font-size: 6em;" class="bi bi-emoji-frown"></i>
+</div>
+{% else %}
+<div class="mt-5 row row-cols-1 row-cols-md-3">
+    {% for post in liked_posts reversed %}
+    <div class="col mb-4">
+        <a href="pet-page/{{post.id}}">
+            <div class="card">
+                <div style="width: 100%; height: 300px; position: relative; overflow: hidden;">
+                    <img style="top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                object-fit: cover;
+                position: absolute;
+                width: 100%; height: 100%;" src="{{post.image.url}}" class="card-img-top" alt="...">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{post.raca_animal}}, {{post.idade}}</h5>
+                    <p class="card-text">{{post.descricao}}</p>
+                    <p class="card-text"><i class="bi bi-geo-alt-fill"> </i>{{post.localizacao}}</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">{{post.created_at}}</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

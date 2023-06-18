@@ -33,8 +33,7 @@ Home
                     <p class="mb-0 ml-1">{{post.user}}</p>
                 </div>
                 <div>
-                    <i style="color: #FF3A3A; font-size: 20px;" class="bi bi-heart"></i>
-                    <i style="color: #FF3A3A; font-size: 20px;" class="bi bi-heart-fill"></i>
+                    <a href="/like/{{post.id}}"><i id="like-btn" style="color: #FF3A3A; font-size: 20px;" class="mr-1 bi bi-heart{% if change_color %}-fill{% endif %}" data-post-id="{{ post.id }}"></i></a>{{post.likes}}
                 </div>
             </div>
             <div class="d-flex mt-2 justify-content-between">
@@ -81,11 +80,39 @@ Home
                     <input type="hidden" name="post_id" value="{{ post.id }}">
                     <input class="form-control" type="text" name="conteudo" id="conteudo"
                         placeholder="Digite um comentário">
-                    <!-- <textarea name="conteudo" placeholder="Digite seu comentário"></textarea> -->
                     <button type="submit" id="submitButton" style="display: none;"></button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- <script>
+    const likeBtn = document.getElementById('like-btn');
+
+    likeBtn.addEventListener('click', function () {
+        console.log("Fui clicado")
+        const postId = likeBtn.getAttribute('data-post-id');
+        const url = '/like-post/';
+
+        // Envia a requisição AJAX para o servidor
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}' // Adicione o token CSRF gerado pelo Django
+            },
+            body: JSON.stringify({ post_id: postId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    likeBtn.classList.add('bi-heart-fill');
+                } else {
+                    likeBtn.classList.remove('bi-heart-fill');
+                }
+            })
+            .catch(error => console.log(error));
+    });
+</script> -->
 {% endblock %}
