@@ -161,6 +161,37 @@ def upload(request):
     return render(request, 'pet-form.html', {'user_profile':user_profile})
   
 @login_required(login_url='/login')
+def editPost(request, id):
+        post = Post.objects.get(id=id)
+        if request.POST:                                
+            image = request.FILES.get('image_upload')
+            descricao = request.POST['descricao']
+            especie = request.POST['especie']
+            raca = request.POST['raca']
+            sexo = request.POST['sexo']
+            idade = request.POST['idade']
+            localizacao = request.POST['localizacao']
+
+            post.image = image
+            post.descricao = descricao
+            post.especie_animal = especie
+            post.raca_animal = raca
+            post.sexo_animal = sexo
+            post.idade = idade
+            post.localizacao = localizacao                
+
+            post.save()
+            messages.info(request, 'Post atualizado com sucesso!')
+            return redirect('profile')                        
+        return render(request, 'pet-form.html', {'titulo_pagina': 'Editar Publicação', 'posts': post})
+
+@login_required(login_url='/login')
+def excluir_post(request, id):
+    post = Post.objects.get(id=id)
+    post.delete()
+    return redirect('profile')
+
+@login_required(login_url='/login')
 def petPage(request, pk):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
@@ -258,7 +289,6 @@ def create_chat(request, user_id):
 
     return redirect(f'/chat/{chat.id}')
 
-
 def chat_detail(_request, chat_id=None):
     chat = get_object_or_404(Chat, id=chat_id)
     messages = chat.messages.all() if chat else None
@@ -313,9 +343,7 @@ def chats_view(request,  chat_id=None):
         'messages': [{'content': message.content, 'timestamp': message.timestamp} for message in messages] if messages else None,
     }
     return render(request, 'chat.html', chat_data)
-
-      
-
+    
 def send_message(request, chat_id):
     if request.method == 'POST':
         # Verifique se o chat existe

@@ -7,52 +7,51 @@ Novo Pet
 
 {% block main %}
 <div class="p-5 my-3">
-    <h3>Nova publicação</h3>
+    <h3>{{ titulo_pagina }}</h3>
     <form style="background-color: #EDEDED; border-radius: 8px;" class="px-5 py-3" action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="info mt-4">
-            <div class="info-data mt-3">
-                <label class="mb-0" for="image_upload">Foto</label>
-                <input type="file" class="form-control" name="image_upload" id="image_upload">
+            <div class="info mt-4">
+                <div class="info-data mt-3">
+                    <label class="mb-0" for="image_upload">Foto</label>                
+                    <input type="file" class="form-control" name="image_upload" id="image_upload">                                                                
+                </div>
+                <div class="info-data mt-3">
+                    <label class="mb-0" for="descricao">Descrição</label>                    
+                    <input type="text" class="form-control" name="descricao" id="descricao" placeholder="Descrição" value={{posts.descricao}}>
+                </div>
+                <div class="input-group d-flex flex-column mt-3">
+                    <label class="mb-0" for="especie">Espécie</label>
+                    <select name="especie" style="width:100%" class="custom-select" id="especie">
+                    <option selected>Escolha...</option>
+                    <option {% if posts.especie_animal == '1'%} selected {% endif %} value="1">Cachorro</option>
+                    <option {% if posts.especie_animal == '2'%} selected {% endif %} value="2">Gato</option>
+                    </select>
+                </div>
+                <div class="info-data mt-3">
+                    <label class="mb-0" for="raca">Raça</label>
+                    <input type="text" class="form-control" name="raca" id="raca" placeholder="Raça" value={{posts.raca_animal}}>                    
+                </div>
+                <div class="input-group d-flex flex-column mt-3">
+                    <label class="mb-0" for="sexo">Sexo</label>
+                    <select style="width:100%" name="sexo" class="custom-select" id="sexo">
+                    <option selected>Escolha...</option>
+                    <option {% if posts.sexo_animal == '1'%} selected {% endif %} value="1">Macho</option>
+                    <option {% if posts.sexo_animal == '2'%} selected {% endif %} value="2">Fêmea</option>
+                    </select>
+                </div>
+                <div class="info-data mt-3">
+                    <label class="mb-0" for="idade">Idade</label>
+                    <input type="number" class="form-control" name="idade" id="idade" placeholder="Idade" value={{posts.idade}}>
+                </div>
+                <div class="info-data mt-3">
+                    <label class="mb-0" for="localizacao">Localização</label>
+                    <input type="text" class="form-control" name="localizacao" id="localizacao" placeholder="Localização" value={{posts.localizacao}}>
+                </div>
+            </div>     
+            <div class="d-flex justify-content-end mt-3">
+                <a class="btn btn-secondary mr-1" href="/">Cancelar</a>
+                <button class="btn btn-primary ml-1" type="submit">Adicionar</button>
             </div>
-            <div class="info-data mt-3">
-                <label class="mb-0" for="descricao">Descrição</label>
-                <input type="text" class="form-control" name="descricao" id="descricao" placeholder="Descrição">
-            </div>
-            <div class="input-group d-flex flex-column mt-3">
-                <label class="mb-0" for="especie">Espécie</label>
-                <select name="especie" style="width:100%" class="custom-select" id="especie">
-                  <option selected>Escolha...</option>
-                  <option value="1">Cachorro</option>
-                  <option value="2">Gato</option>
-                </select>
-            </div>
-            <div class="info-data mt-3">
-                <label class="mb-0" for="raca">Raça</label>
-                <input type="text" class="form-control" name="raca" id="raca" placeholder="Raça">
-            </div>
-            <div class="input-group d-flex flex-column mt-3">
-                <label class="mb-0" for="sexo">Sexo</label>
-                <select style="width:100%" name="sexo" class="custom-select" id="sexo">
-                  <option selected>Escolha...</option>
-                  <option value="1">Macho</option>
-                  <option value="2">Fêmea</option>
-                </select>
-            </div>
-            <div class="info-data mt-3">
-                <label class="mb-0" for="idade">Idade</label>
-                <input type="number" class="form-control" name="idade" id="idade" placeholder="Idade">
-            </div>
-            <div class="info-data mt-3">
-                <label class="mb-0" for="localizacao">Localização</label>
-                <input type="text" class="form-control" name="localizacao" id="localizacao" placeholder="Localização">
-            </div>
-        </div> 
-        
-        <div class="d-flex justify-content-end mt-3">
-            <a class="btn btn-secondary mr-1" href="/">Cancelar</a>
-            <button class="btn btn-primary ml-1" type="submit">Adicionar</button>
-        </div>
-    </form>
+        </form>
 </div>
 {% endblock %}
