@@ -8,16 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('message-input');
     const messagesContainer = document.getElementById('messages-container');
     const chatId = getChatId()
-
-    
-   
     
     if (!!chatId) {
         fetch(`/chat_detail/${chatId}/`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                const user2Username = data.user2_username;
                 const messages = data.messages;
     
                 let chatDetailHTML = `
@@ -27,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 messages.forEach((message) => {
                     const content = message.content;
                     chatDetailHTML += `
-                        <div class="other-message message">
+                        <div class="other-message message mt-3">
                             <p>${content}</p>
                         </div>
                     `;
@@ -39,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.log(error));
     } else{
         const sendMessageForm = document.getElementById('send-message-form');
+        const imageChatGroupMessage = document.getElementById('image-chat-group-message')
         sendMessageForm.style.setProperty('display', 'none', 'important')
+        imageChatGroupMessage.style.setProperty('display', 'none', 'important')
     }
    
   

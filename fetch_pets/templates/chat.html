@@ -2,25 +2,63 @@
 {% load static %}
 
 {% block title %}
-Meu perfil
+Chat
 {% endblock %}
 
 {% block main %}
 
 
 <link rel="stylesheet" href="{% static 'css/chat.css'%}">
+<style>
+    #scroll-area::-webkit-scrollbar {
+  width: 10px;               /* width of the entire scrollbar */
+}
+
+#scroll-area::-webkit-scrollbar-track {
+  background: transparent;        /* color of the tracking area */
+}
+
+#scroll-area::-webkit-scrollbar-thumb {
+  background-color: #cbcbcb;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */  /* creates padding around scroll thumb */
+}
+</style>
 <div class="container">
-    <div class="row clearfix">
+    <div class="row clearfix mt-5">
         <div class="col-lg-12">
             <div class="card chat-app">
                 <div id="plist" class="people-list">
                     <ul class="list-unstyled chat-list mt-2 mb-0">
+                        <h5>Seus chats</h5>
                         {% for chat in chats %}
                         <li class="list-group-item clearfix">
                             <a href="/chat/{{ chat.id }}" class="chat-link" data-chat-id="{{ chat.id }}">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                                <div class="about">
-                                    <div class="name">{{chat.user2.username }}</div>
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 40px; height: 40px; position: relative; overflow: hidden;">
+                                    {% if chat.user2.username == user_object.username %}
+                                    <img style="top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    object-fit: cover;
+                                    position: absolute;
+                                    width: 100%; height: 100%;" src="{{chat.user1_profile.profileimg.url}}" id="image-chat-group" alt="avatar">
+                                    {% else %}
+                                    <img style="top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    object-fit: cover;
+                                    position: absolute;
+                                    width: 100%; height: 100%;" src="{{chat.user2_profile.profileimg.url}}" id="image-chat-group" alt="avatar">
+                                    {% endif %}    
+                                </div>
+                                    <div class="about">
+                                        <!-- // if chat.user2.username === user_object.username - render chat.user1.username else chat.user2.username -->
+                                        {% if chat.user2.username == user_object.username %}
+                                        <div class="name">{{chat.user1.username }}</div>
+                                        {% else %}
+                                        <div class="name">{{chat.user2.username }}</div>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </a>
                         </li>
@@ -31,18 +69,25 @@ Meu perfil
                 <div class="chat">
                     <div class="chat-header clearfix">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="d-flex align-items-center col-lg-6">
                                 <a href="#" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                    <div style="width: 40px; height: 40px; position: relative; overflow: hidden;">
+                                        <img style="top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        object-fit: cover;
+                                        position: absolute;
+                                        width: 100%; height: 100%;" src="{{user_chat_profile.profileimg.url}}" id="image-chat-group-message" alt="avatar">
+                                        </div>
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0">{{chat.user2.username }}</h6>
+                                    <h6 class="m-b-0">{{user_chat_profile.nome_usuario}}</h6>
                                     <!-- <small>Last seen: 2 hours ago</small> -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex flex-column chat-history">
+                    <div style="overflow-y: scroll; height: 400px;" id="scroll-area" class="d-flex flex-column chat-history">
                         <ul id="messages-container" class="m-b-0">
                             <!-- Mesagens aqui -->
                         </ul>

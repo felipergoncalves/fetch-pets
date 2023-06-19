@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from .models import Profile, Post, Comentario, LikePost, Chat, Message
+from django.db.models import Q
 
 # Create your views here.
 def index(request):    
@@ -249,7 +250,7 @@ def create_chat(request, user_id):
     post_owner = get_object_or_404(User, username=user_id)
 
     # Verifica se já existe um chat entre o usuário logado e o usuário dono do post
-    chat = Chat.objects.filter(user1=request.user, user2=post_owner).first()
+    chat = Chat.objects.filter(Q(user1=request.user, user2=post_owner) | Q(user1=post_owner, user2=request.user)).first()
 
     # Se não existir um chat, cria um novo
     if not chat:
@@ -258,8 +259,8 @@ def create_chat(request, user_id):
     return redirect(f'/chat/{chat.id}')
 
 
-def chat_detail(request, chat_id=None):
-    chat = get_object_or_404(Chat, id=chat_id, user1=request.user)
+def chat_detail(_request, chat_id=None):
+    chat = get_object_or_404(Chat, id=chat_id)
     messages = chat.messages.all() if chat else None
 
     chat_data = {
@@ -271,11 +272,15 @@ def chat_detail(request, chat_id=None):
 
 @login_required(login_url='/login')
 def chats(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
     # Obtém todos os chats do usuário logado
-    user_chats = Chat.objects.filter(user1=request.user)
+    user_chats = Chat.objects.filter(Q(user1=request.user) | Q(user2=request.user))
 
     context = {
-        'chats': user_chats
+        'chats': [{'id': user_chat.id, 'user1': user_chat.user1, 'user2': user_chat.user2, 'user1_profile': Profile.objects.get(user=user_chat.user1), 'user2_profile': Profile.objects.get(user=user_chat.user2)} for user_chat in user_chats] if user_chats else None,
+        'user_object':user_object,
+        'user_profile':user_profile,
     }
 
     print(user_chats)
@@ -284,15 +289,27 @@ def chats(request):
     
 @login_required(login_url='/login')
 def chats_view(request,  chat_id=None):
-    chat = get_object_or_404(Chat, id=chat_id, user1=request.user)
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+    query_set = Chat.objects.filter(Q(id=chat_id, user1=request.user) | Q(id=chat_id, user2=request.user))
+    chat = get_object_or_404(query_set)
     # Obtém todos os chats do usuário logado
-    user_chats = Chat.objects.filter(user1=request.user)
+    user_chats = Chat.objects.filter(Q(user1=request.user) | Q(user2=request.user))
     messages = chat.messages.all() if chat else None
+    user_to_display = chat.user2.username
+    if chat.user2.username == request.user.username:
+        user_to_display = chat.user1.username
+    user_chat_object = User.objects.get(username=user_to_display)
+    user_chat_profile = Profile.objects.get(user=user_chat_object)
+    
 
     chat_data = {
-         'chats': user_chats,
+        'chats':  [{'id': user_chat.id, 'user1': user_chat.user1, 'user2': user_chat.user2, 'user1_profile': Profile.objects.get(user=user_chat.user1), 'user2_profile': Profile.objects.get(user=user_chat.user2)} for user_chat in user_chats] if user_chats else None,
         'chat_id': chat.id,
-        'user2_username': chat.user2.username if chat else None,
+        'user_object':user_object,
+        'user_profile':user_profile,
+        'user_chat_object':user_chat_object,
+        'user_chat_profile':user_chat_profile,
         'messages': [{'content': message.content, 'timestamp': message.timestamp} for message in messages] if messages else None,
     }
     return render(request, 'chat.html', chat_data)
