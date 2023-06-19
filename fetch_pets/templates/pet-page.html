@@ -45,7 +45,7 @@ Home
             </div>
             <p style="resize: none" name="" id="" cols="30" rows="5" disabled>{{post.descricao}}</p>
             <div class="d-flex w-100 justify-content-end">
-                <a class="btn btn-primary" href="">Tenho Interesse</a>
+                <a class="btn btn-primary" href="{% url 'create_chat' user_id=post.user %}">Tenho Interesse</a>
             </div>
         </div>
         <hr class="mt-2 mb-1 w-100" style="background-color: #ADADAD; height:2px;">
@@ -86,33 +86,4 @@ Home
         </div>
     </div>
 </div>
-
-<!-- <script>
-    const likeBtn = document.getElementById('like-btn');
-
-    likeBtn.addEventListener('click', function () {
-        console.log("Fui clicado")
-        const postId = likeBtn.getAttribute('data-post-id');
-        const url = '/like-post/';
-
-        // Envia a requisição AJAX para o servidor
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}' // Adicione o token CSRF gerado pelo Django
-            },
-            body: JSON.stringify({ post_id: postId })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.liked) {
-                    likeBtn.classList.add('bi-heart-fill');
-                } else {
-                    likeBtn.classList.remove('bi-heart-fill');
-                }
-            })
-            .catch(error => console.log(error));
-    });
-</script> -->
 {% endblock %}

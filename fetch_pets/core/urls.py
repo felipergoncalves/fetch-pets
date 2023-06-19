@@ -10,5 +10,12 @@ urlpatterns = [
     path('upload', views.upload, name='upload'),
     path('pet-page/<str:pk>', views.petPage, name='pet-page'),
     path('like/<str:pk>', views.like, name='like'),
-    path('liked_posts', views.liked_posts, name='liked_posts')
+    path('liked_posts', views.liked_posts, name='liked_posts'),
+    path('chats', views.chats, name="chats"),
+    path('chat/<int:chat_id>', views.chats_view, name="chat"),
+    path('create_chat/<str:user_id>/', views.create_chat, name='create_chat'),
+    path('chat_detail/<int:chat_id>/', views.chat_detail, name='chat_detail'),
+    path('send_message/<int:chat_id>/', views.send_message, name='send_message'),
+    #path('chat/<int:chat_id>/', views.chat_detail, name='chat_detail'),
+    #path('chat_detail/<int:chat_id>/', views.chat_detail, name='chat_detail'),
 ]

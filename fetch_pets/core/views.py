@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+import json
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.urls import reverse
-from .models import Profile, Post, Comentario, LikePost
+from .models import Profile, Post, Comentario, LikePost, Chat, Message
 
 # Create your views here.
 def index(request):    
@@ -229,18 +231,6 @@ def like(request, pk):
 @login_required(login_url='/login')
 def liked_posts(request):
     user_profile = Profile.objects.get(user=request.user)
-    liked_posts = user_profile.liked_posts.all()
-
-    context = {
-        'user_profile': user_profile,
-        'liked_posts': liked_posts,
-    }
-
-    return render(request, 'liked_posts.html', context)
-
-@login_required(login_url='/login')
-def liked_posts(request):
-    user_profile = Profile.objects.get(user=request.user)
     user = request.user
     liked_posts = LikePost.objects.filter(username=user).values('post_id')
     posts = Post.objects.filter(id__in=liked_posts)
@@ -252,3 +242,85 @@ def liked_posts(request):
     }
 
     return render(request, 'liked_posts.html', context)
+
+@login_required
+def create_chat(request, user_id):
+    # Verifica se o usuário dono do post existe
+    post_owner = get_object_or_404(User, username=user_id)
+
+    # Verifica se já existe um chat entre o usuário logado e o usuário dono do post
+    chat = Chat.objects.filter(user1=request.user, user2=post_owner).first()
+
+    # Se não existir um chat, cria um novo
+    if not chat:
+        chat = Chat.objects.create(user1=request.user, user2=post_owner)
+
+    return redirect(f'/chat/{chat.id}')
+
+
+def chat_detail(request, chat_id=None):
+    chat = get_object_or_404(Chat, id=chat_id, user1=request.user)
+    messages = chat.messages.all() if chat else None
+
+    chat_data = {
+        'chat_id': chat.id,
+        'user2_username': chat.user2.username if chat else None,
+        'messages': [{'content': message.content, 'timestamp': message.timestamp} for message in messages] if messages else None,
+    }
+    return JsonResponse(chat_data)
+
+@login_required(login_url='/login')
+def chats(request):
+    # Obtém todos os chats do usuário logado
+    user_chats = Chat.objects.filter(user1=request.user)
+
+    context = {
+        'chats': user_chats
+    }
+
+    print(user_chats)
+
+    return render(request, 'chat.html', context)
+    
+@login_required(login_url='/login')
+def chats_view(request,  chat_id=None):
+    chat = get_object_or_404(Chat, id=chat_id, user1=request.user)
+    # Obtém todos os chats do usuário logado
+    user_chats = Chat.objects.filter(user1=request.user)
+    messages = chat.messages.all() if chat else None
+
+    chat_data = {
+         'chats': user_chats,
+        'chat_id': chat.id,
+        'user2_username': chat.user2.username if chat else None,
+        'messages': [{'content': message.content, 'timestamp': message.timestamp} for message in messages] if messages else None,
+    }
+    return render(request, 'chat.html', chat_data)
+
+      
+
+def send_message(request, chat_id):
+    if request.method == 'POST':
+        # Verifique se o chat existe
+        chat = get_object_or_404(Chat, id=chat_id)
+
+        print('Mostrando o chat', chat)
+        
+        # Obtenha o conteúdo da mensagem enviado pelo formulário
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        content = body['content']
+        
+        # Crie uma nova mensagem
+        message = Message(chat=chat, sender=request.user, content=content)
+        message.save()
+
+        # Retorne a resposta JSON com os dados da nova mensagem
+        response_data = {
+            'content': message.content,
+            'timestamp': message.timestamp,
+        }
+        return JsonResponse(response_data)
+
+    # Se a requisição não for um POST, retorne uma resposta de erro
+    return JsonResponse({'error': 'Método inválido.'})

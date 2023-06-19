@@ -59,3 +59,20 @@ class LikePost(models.Model):
 
     def __str__(self):
         return {str(self.username)}
+    
+class Chat(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chats_as_user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chats_as_user2')
+
+    def __str__(self):
+        return f'Chat {self.id}'
+
+
+class Message(models.Model):
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Message {self.id}'
